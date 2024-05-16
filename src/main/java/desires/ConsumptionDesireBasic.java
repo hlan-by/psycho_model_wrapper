@@ -1,9 +1,9 @@
-package urges;
+package desires;
 
-public class ProtectionUrgeBasic implements Urge {
+public class ConsumptionDesireBasic implements Desire {
     private double impact;
 
-    public ProtectionUrgeBasic(double impact) {
+    public ConsumptionDesireBasic(double impact) {
         this.impact = impact;
     }
 

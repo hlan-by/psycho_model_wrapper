@@ -1,15 +1,16 @@
 package figures;
 
+import ai_models.AIModelSearchFigure;
+import desires.SpecificDesire;
 import percepts.CombinatedPercept;
 import percepts.Percept;
-import desires.SpecificDesire;
 
 /**Example:
  * Percept percept = new FigureBuilder()
  *                             .withFiguresAndCurrentPercept(combinatedPercept, desire, figures)
  *                             .build();
  *                             */
-public class FigureBuilder {
+public class FigureSearcher {
     private Percept percept;
 
     public Percept getPercept() {
@@ -39,10 +40,7 @@ public class FigureBuilder {
     private Figure[] figures;
     private SpecificDesire desire;
 
-    public Figure withFiguresAndCurrentPercept(CombinatedPercept combinatedPercept, SpecificDesire desire, Figure... figures) {
-        this.percept = combinatedPercept;
-        this.figures = figures;
-        this.desire = desire;
-        return new SpecificFigure().setFigures(figures).setPercept(percept).setDesire(desire);
+    public Figure find(CombinatedPercept combinatedPercept, SpecificDesire desire, Figure... figures) {
+        return new AIModelSearchFigure(combinatedPercept, desire, figures).getFigureOrCreateNewOne();
     }
 }

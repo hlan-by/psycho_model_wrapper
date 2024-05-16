@@ -1,9 +1,9 @@
-package urges;
+package desires;
 
-public class ExpansionUrgeBasic implements Urge {
+public class ExpansionDesireBasic implements Desire {
     private double impact;
 
-    public ExpansionUrgeBasic(double impact) {
+    public ExpansionDesireBasic(double impact) {
         this.impact = impact;
     }
 
