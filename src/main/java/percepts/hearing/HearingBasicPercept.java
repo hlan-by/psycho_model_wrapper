@@ -1,4 +1,6 @@
-package percepts;
+package percepts.hearing;
+
+import percepts.Percept;
 
 public class HearingBasicPercept implements Percept {
     @Override

@@ -1,4 +1,6 @@
-package percepts;
+package percepts.touch;
+
+import percepts.Percept;
 
 public class TouchBasicPercept implements Percept {
     @Override

@@ -1,4 +1,6 @@
-package percepts;
+package percepts.vision;
+
+import percepts.Percept;
 
 public class VisionBasicPercept implements Percept {
     @Override

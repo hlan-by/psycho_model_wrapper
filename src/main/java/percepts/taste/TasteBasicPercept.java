@@ -1,4 +1,6 @@
-package percepts;
+package percepts.taste;
+
+import percepts.Percept;
 
 public class TasteBasicPercept implements Percept {
     @Override
