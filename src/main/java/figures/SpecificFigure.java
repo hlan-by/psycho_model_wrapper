@@ -1,7 +1,7 @@
 package figures;
 
+import desires.Desire;
 import desires.SpecificDesire;
-import percepts.CombinatedPercept;
 import percepts.Percept;
 
 /**
@@ -31,8 +31,8 @@ public class SpecificFigure implements Figure {
         return this;
     }
 
-    public SpecificDesire getDesire() {
-        return desire;
+    public Desire getDesire(Desire desireToNegotiate) {
+        return desire.getBasicDesire(desireToNegotiate);
     }
 
     public SpecificFigure setDesire(SpecificDesire desire) {

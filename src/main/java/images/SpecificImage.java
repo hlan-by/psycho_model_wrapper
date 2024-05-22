@@ -1,5 +1,6 @@
 package images;
 
+import desires.Desire;
 import emotions.Emotion;
 import figures.Figure;
 import sences.SpecificSense;
@@ -16,8 +17,8 @@ public class SpecificImage implements Image {
         return figure;
     }
 
-    public SpecificImage setFigure(Figure figures) {
-        this.figure = figures;
+    public SpecificImage setFigure(Figure figure) {
+        this.figure = figure;
         return this;
     }
 
@@ -33,4 +34,8 @@ public class SpecificImage implements Image {
     private Figure figure;
     private Emotion emotion;
 
+    @Override
+    public Desire getSpecificDesire(Desire desireToNegotiate) {
+      return getFigure().getDesire(desireToNegotiate);
+    }
 }
