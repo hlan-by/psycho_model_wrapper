@@ -13,6 +13,16 @@ import percepts.Percept;
 public class SpecificFigure implements Figure {
     private Percept percept;
 
+    public double getIntentionalValue() {
+        return intentionalValue;
+    }
+
+    public void setIntentionalValue(double intentionalValue) {
+        this.intentionalValue = intentionalValue;
+    }
+
+    private double intentionalValue;
+
     public Percept getPercept() {
         return percept;
     }
