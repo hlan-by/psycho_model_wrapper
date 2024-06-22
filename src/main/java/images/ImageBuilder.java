@@ -1,7 +1,5 @@
 package images;
 
-import desires.SpecificDesire;
-import emotions.EmotionBuilder;
 import figures.Figure;
 import sences.SpecificSense;
 
@@ -30,8 +28,5 @@ public class ImageBuilder {
         this.figure = figure;
         this.senses = senses;
         return new SpecificImage().setFigure(figure).setSpecificSenses(senses);
-    }
-    public SpecificImage setEmotion(SpecificImage specificImage, SpecificDesire specificDesire){
-        return specificImage.setEmotion(new EmotionBuilder().build(specificImage, specificDesire));
     }
 }

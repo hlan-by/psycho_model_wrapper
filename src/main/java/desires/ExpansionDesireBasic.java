@@ -3,7 +3,7 @@ package desires;
 import feelings.Pleasure;
 
 public class ExpansionDesireBasic implements Desire {
-    private final Pleasure pleasure;
+    private Pleasure pleasure;
     private double impact;
     private double feedBackLevel;
     private double MAX_ALLOWED_IMPACT_LEVEL = 10E19;//todo setup correct value
@@ -11,10 +11,14 @@ public class ExpansionDesireBasic implements Desire {
     private double UNACCEPTABLE_HIGH_LEVEL = 10E15;//todo setup correct value. if more, produces dicomfort, unpleasure rise
     private double UNACCEPTABLE_LOW_LEVEL = 100;//todo setup correct value. if less, impact frustated, unpleasure rise
 
-    public ExpansionDesireBasic(double impact, Pleasure pleasure) {
-        this.impact = impact;
-        this.pleasure = pleasure;
+    public Pleasure getPleasure() {
+        return pleasure;
     }
+
+    public void setImpact(double impact) {
+        this.impact = impact;
+    }
+
     @Override
     public double getMinAllowedFeedbackLevel() {
         return MIN_ALLOWED_FEEDBACK_LEVEL;

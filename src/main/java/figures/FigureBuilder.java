@@ -1,8 +1,10 @@
 package figures;
 
+import desires.Desire;
 import percepts.CombinatedPercept;
 import percepts.Percept;
-import desires.SpecificDesire;
+
+import java.util.List;
 
 /**Example:
  * Percept percept = new FigureBuilder()
@@ -28,21 +30,21 @@ public class FigureBuilder {
         this.figures = figures;
     }
 
-    public SpecificDesire getDesire() {
-        return desire;
+    public List<Desire> getDesires() {
+        return desires;
     }
 
-    public void setDesire(SpecificDesire desire) {
-        this.desire = desire;
+    public void setDesires(List<Desire> desires) {
+        this.desires = desires;
     }
 
     private Figure[] figures;
-    private SpecificDesire desire;
+    private List<Desire> desires;
 
-    public Figure withFiguresAndCurrentPercept(CombinatedPercept combinatedPercept, SpecificDesire desire, Figure... figures) {
+    public Figure withFiguresAndCurrentPercept(CombinatedPercept combinatedPercept, List<Desire> desires, Figure... figures) {
         this.percept = combinatedPercept;
         this.figures = figures;
-        this.desire = desire;
-        return new SpecificFigure().setFigures(figures).setPercept(percept).setDesire(desire);
+        this.desires = desires;
+        return new SpecificFigure().setFigures(figures).setPercept(percept).setDesires(desires);
     }
 }

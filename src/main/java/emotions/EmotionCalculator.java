@@ -1,61 +1,35 @@
 package emotions;
 
-import emotions.core.SupportJoy;
-import emotions.key.*;
+import desires.ConsumptionDesireBasic;
+import desires.Desire;
+import desires.ExpansionDesireBasic;
+import desires.ProtectionDesireBasic;
+import desires.RecognitionDesireBasic;
+import desires.ReproductionDesireBasic;
+import emotions.key.AngerI;
+import emotions.key.DisgustI;
+import emotions.key.FearI;
+import emotions.key.InterestI;
+import emotions.key.JoyI;
+import emotions.key.KeyEmotion;
+import emotions.key.PleasureI;
+import emotions.key.SadnessI;
+import emotions.key.SurpriseI;
+import figures.Figure;
+import figures.SpecificFigure;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 public class EmotionCalculator {
 
-    // Transfer for basic needs
-    enum BasicNeed {
-        EXPANSION, PROTECTION, RECOGNITION, REPRODUCTION, CONSUMPTION
-    }
-
-   /* // Enumeration for emotions
-    enum Emotion {
-        SURPRISE, SADNESS, PLEASURE, JOY, INTEREST, FEAR, DISGUST, ANGER
-    }*/
-
-    // Enumeration for level of need satisfaction
-    enum SatisfactionLevel {
-        INSUFFICIENT, COMFORTABLE, EXCESSIVE
-    }
-
-    // Class for representing a figure
-    static class Figure {
-        Map<BasicNeed, Integer> needsSatisfaction;
-        Map<BasicNeed, SatisfactionLevel> satisfactionLevels;
-
-        Figure() {
-            needsSatisfaction = new HashMap<>();
-            satisfactionLevels = new HashMap<>();
-        }
-
-        void setNeedSatisfaction(BasicNeed need, int value) {
-            needsSatisfaction.put(need, value);
-        }
-
-        void setSatisfactionLevel(BasicNeed need, SatisfactionLevel level) {
-            satisfactionLevels.put(need, level);
-        }
-
-        int getNeedSatisfaction(BasicNeed need) {
-            return needsSatisfaction.getOrDefault(need, 0);
-        }
-
-        SatisfactionLevel getSatisfactionLevel(BasicNeed need) {
-            return satisfactionLevels.getOrDefault(need, SatisfactionLevel.COMFORTABLE);
-        }
-    }
-
     // Method for calculating emotions
     static KeyEmotion calculateEmotion(Figure figure1, Figure figure2) {
+        List<Desire> desires = Arrays.asList(new ExpansionDesireBasic(), new ProtectionDesireBasic(), new RecognitionDesireBasic()
+                , new ConsumptionDesireBasic(), new ReproductionDesireBasic());
         int totalSatisfaction = 0;
         int totalSatisfactionDifference = 0;
-
-        for (BasicNeed need : BasicNeed.values()) {
+        for (Desire need : desires) {
             int satisfaction1 = figure1.getNeedSatisfaction(need);
             int satisfaction2 = figure2.getNeedSatisfaction(need);
             totalSatisfaction += satisfaction1 + satisfaction2;
@@ -68,8 +42,8 @@ public class EmotionCalculator {
             totalSatisfactionDifference += difference;
         }
 
-        double averageSatisfaction = totalSatisfaction / (2.0 * BasicNeed.values().length);
-        double averageDifference = totalSatisfactionDifference / (double) BasicNeed.values().length;
+        double averageSatisfaction = totalSatisfaction / (2.0 * desires.size());
+        double averageDifference = totalSatisfactionDifference / (double) desires.size();
 
         if (averageSatisfaction > 75) {
             if (averageDifference < 20) {
@@ -99,7 +73,7 @@ public class EmotionCalculator {
 
     // Method for checking for over- or under-satisfaction of needs
     private static boolean containsExcessiveOrInsufficient(Figure figure) {
-        for (SatisfactionLevel level : figure.satisfactionLevels.values()) {
+        for (SatisfactionLevel level : figure.getSatisfactionLevels().values()) {
             if (level == SatisfactionLevel.EXCESSIVE || level == SatisfactionLevel.INSUFFICIENT) {
                 return true;
             }
@@ -109,13 +83,15 @@ public class EmotionCalculator {
 
     public static void main(String[] args) {
         // Example
-        Figure figure1 = new Figure();
-        figure1.setNeedSatisfaction(BasicNeed.CONSUMPTION, 90);
-        figure1.setSatisfactionLevel(BasicNeed.CONSUMPTION, SatisfactionLevel.EXCESSIVE);
+        Desire expansion = new ExpansionDesireBasic();
+        Desire consumptionDesireBasic = new ConsumptionDesireBasic();
+        Figure figure1 = new SpecificFigure();
+        figure1.setNeedSatisfaction(expansion, 90);
+        figure1.setSatisfactionLevel(expansion, SatisfactionLevel.EXCESSIVE);
 
-        Figure figure2 = new Figure();
-        figure2.setNeedSatisfaction(BasicNeed.CONSUMPTION, 20);
-        figure2.setSatisfactionLevel(BasicNeed.CONSUMPTION, SatisfactionLevel.COMFORTABLE);
+        Figure figure2 = new SpecificFigure();
+        figure2.setNeedSatisfaction(consumptionDesireBasic, 20);
+        figure2.setSatisfactionLevel(consumptionDesireBasic, SatisfactionLevel.COMFORTABLE);
 
         KeyEmotion emotion = calculateEmotion(figure1, figure2);
         System.out.println("Resulting Emotion: " + emotion);

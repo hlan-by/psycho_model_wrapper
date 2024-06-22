@@ -34,8 +34,4 @@ public class SpecificImage implements Image {
     private Figure figure;
     private Emotion emotion;
 
-    @Override
-    public Desire getSpecificDesire(Desire desireToNegotiate) {
-      return getFigure().getDesire(desireToNegotiate);
-    }
 }
