@@ -1,11 +1,6 @@
 package emotions;
 
-import desires.ConsumptionDesireBasic;
-import desires.Desire;
-import desires.ExpansionDesireBasic;
-import desires.ProtectionDesireBasic;
-import desires.RecognitionDesireBasic;
-import desires.ReproductionDesireBasic;
+import desires.*;
 import emotions.key.AngerI;
 import emotions.key.DisgustI;
 import emotions.key.FearI;

@@ -1,7 +1,7 @@
 package figures;
 
 import desires.Desire;
-import emotions.SatisfactionLevel;
+import desires.SatisfactionLevel;
 
 import java.util.Map;
 

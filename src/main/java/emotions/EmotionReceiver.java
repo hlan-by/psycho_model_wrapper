@@ -25,13 +25,13 @@ public class EmotionReceiver implements CoreEmotion {
             return new WrongnessDisgust();
         }
         if (!isExcessiveDesireRising()) {
-            return new RecognitionSatisfaction();
+            return new PleasureSatisfaction();
         }
         if (isFrustrationOfDesireRising()) {
             return new HumiliationFear();
         }
         if (!isFrustrationOfDesireRising()) {
-            return new SupportJoy();
+            return new ReliefJoy();
         }
         if (!isAcceptableDesireRising() && (isFrustrationOfDesireRising() || isExcessiveDesireRising())
                 && isLikingInterestPresent() && (isHumiliationFearPresent() || isWrongnessDisgustPresent())) {

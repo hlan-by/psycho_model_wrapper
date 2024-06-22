@@ -1,7 +1,7 @@
 package ai_models;
 
 import desires.Desire;
-import emotions.SatisfactionLevel;
+import desires.SatisfactionLevel;
 import figures.Figure;
 import percepts.CombinatedPercept;
 

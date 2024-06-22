@@ -14,7 +14,7 @@ public class EmotionMatrix {
     };
 
     private static final Class<?>[] columnHeaders = {
-            emotions.core.Surprise.class, emotions.core.Anger.class, LikingInterest.class, SupportJoy.class, RecognitionSatisfaction.class, emotions.core.Sadness.class, HumiliationFear.class, WrongnessDisgust.class
+            emotions.core.Surprise.class, emotions.core.Anger.class, LikingInterest.class, ReliefJoy.class, PleasureSatisfaction.class, emotions.core.Sadness.class, HumiliationFear.class, WrongnessDisgust.class
     };
 
     private static final Class<?>[][] emotionMatrix = {
