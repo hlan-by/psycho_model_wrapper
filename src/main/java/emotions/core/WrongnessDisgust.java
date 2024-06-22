@@ -1,3 +1,3 @@
 package emotions.core;
 
-public class WrongnessDisgust {}
+public class WrongnessDisgust  implements CoreEmotion {}

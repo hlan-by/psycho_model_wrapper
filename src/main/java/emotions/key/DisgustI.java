@@ -1,3 +1,4 @@
 package emotions.key;
 
-public class DisgustI {}
+public class DisgustI implements KeyEmotion {
+}

@@ -1,3 +1,3 @@
 package emotions.key;
 
-public class SadnessOther {}
+public class SadnessOther implements KeyEmotion {}

@@ -1,3 +1,3 @@
 package emotions.core;
 
-public class LikingInterest {}
+public class LikingInterest  implements CoreEmotion {}

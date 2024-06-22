@@ -1,3 +1,4 @@
 package emotions.core;
 
-public class Anger {}
+public class Anger implements CoreEmotion {
+}

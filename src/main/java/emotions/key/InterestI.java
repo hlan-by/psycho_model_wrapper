@@ -1,4 +1,4 @@
 
 package emotions.key;
 
-public class InterestI {}
+public class InterestI implements KeyEmotion {}
