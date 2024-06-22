@@ -1,7 +1,7 @@
 package conscience;
 
-import feels.Feel;
-import feels.SpecificFeel;
+import feelings.Feeling;
+import feelings.SpecificFeeling;
 
 public class ConsciousnessRunner implements Runnable {
     private static final long UPDATE_SELF_AWARE_ENTITY_PERIOD = 10;
@@ -22,7 +22,7 @@ public class ConsciousnessRunner implements Runnable {
                 return;
             }
 
-            Feel currentFeel = entity.getCurrentFeel();
+            Feeling currentFeel = entity.getCurrentFeel();
             entity.compareFeels();
             entity.setPreviousFeel(currentFeel); // Update previousFeel to currentFeel
         }
@@ -37,7 +37,7 @@ public class ConsciousnessRunner implements Runnable {
         IAm selfAwareEntity = new SelfAwareEntity();
 
         // Setup base feels
-        Feel initialFeel = new SpecificFeel(); //todo setup parameters
+        Feeling initialFeel = new SpecificFeeling(); //todo setup parameters
         selfAwareEntity.setCurrentFeel(initialFeel);
         selfAwareEntity.setPreviousFeel(initialFeel);
 
@@ -45,7 +45,7 @@ public class ConsciousnessRunner implements Runnable {
         Thread runnerThread = new Thread(runner);
         runnerThread.start();
 
-        Feel newFeel = new SpecificFeel(); //todo setup parameters
+        Feeling newFeel = new SpecificFeeling(); //todo setup parameters
         selfAwareEntity.setCurrentFeel(newFeel);
 
         runner.stop();
