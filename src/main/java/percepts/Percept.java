@@ -2,9 +2,11 @@ package percepts;
 
 public interface Percept {
 
-    static boolean getStrongSignal(Percept percept, double signalLevel) {
-        return percept.getSignalLevel()>signalLevel;
+    static boolean isStrongSignal(Percept percept, double threshold) {
+        return percept.getSignalLevel() > threshold;
     }
+
+    String getType();
 
     double getSignalLevel();
 }

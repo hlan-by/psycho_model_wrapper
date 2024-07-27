@@ -1,16 +1,18 @@
 package figures;
 
 import desires.Desire;
-import percepts.CombinatedPercept;
+import figures.meanings.MeaningBuilder;
+import percepts.CombinedPercept;
 import percepts.Percept;
 
 import java.util.List;
 
-/**Example:
+/**
+ * Example:
  * Percept percept = new FigureBuilder()
- *                             .withFiguresAndCurrentPercept(combinatedPercept, desire, figures)
- *                             .build();
- *                             */
+ * .withFiguresAndCurrentPercept(combinedPercept, desire, figures)
+ * .build();
+ */
 public class FigureBuilder {
     private Percept percept;
 
@@ -41,10 +43,26 @@ public class FigureBuilder {
     private Figure[] figures;
     private List<Desire> desires;
 
-    public Figure withFiguresAndCurrentPercept(CombinatedPercept combinatedPercept, List<Desire> desires, Figure... figures) {
-        this.percept = combinatedPercept;
+    // Updated FigureBuilder to include Meaning creation
+
+    public FigureBuilder withFiguresAndCurrentPercept(Percept percept, List<Desire> desires, Figure... figures) {
+        this.percept = percept;
         this.figures = figures;
         this.desires = desires;
-        return new SpecificFigure().setFigures(figures).setPercept(percept).setDesires(desires);
+        return this;
+    }
+
+    public SpecificFigure buildSpecificFigure() {
+        return new SpecificFigure()
+                .setFigures(figures)
+                .setPercept(percept)
+                .setDesires(desires);
+    }
+
+    public MeaningBuilder buildMeaning(String symbol) {
+        return new MeaningBuilder()
+                .withSymbol(symbol)
+                .withPercept(this.percept)
+                .withDesires(this.desires);
     }
 }

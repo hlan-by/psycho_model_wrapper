@@ -1,20 +1,19 @@
 package percepts;
 
+// PerceptBuilder for creating complex percepts
 public class PerceptBuilder {
-    //needs to be appended by Sense when feeling this
-    private Percept[] percepts;
-    private double signalLevel;
+    private CombinedPercept combinedPercept;
 
-
-    public CombinatedPercept build(double strongValue, Percept... percepts) {
-        this.percepts = percepts;
-        this.signalLevel = strongValue;
-        return getCombinatedPercept();
+    public PerceptBuilder(String type) {
+        this.combinedPercept = new CombinedPercept(type);
     }
 
-    private CombinatedPercept getCombinatedPercept() {
-        CombinatedPercept combinatedPercept = new CombinatedPercept();
-        combinatedPercept.filterPerceptsBySignalLevel(percepts, signalLevel);
-        return combinatedPercept;
+    public PerceptBuilder addPercept(String key, Percept percept) {
+        combinedPercept.addPercept(key, percept);
+        return this;
+    }
+
+    public CombinedPercept build() {
+        return combinedPercept;
     }
 }
