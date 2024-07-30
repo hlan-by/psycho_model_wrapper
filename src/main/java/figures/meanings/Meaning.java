@@ -2,6 +2,7 @@ package figures.meanings;
 
 import desires.Desire;
 import desires.SatisfactionLevel;
+import emotions.key.KeyEmotion;
 import figures.Figure;
 import percepts.Percept;
 
@@ -62,6 +63,11 @@ public class Meaning implements Figure {
     @Override
     public SatisfactionLevel getSatisfactionLevel(Desire need) {
         return satisfactionLevels.getOrDefault(need, SatisfactionLevel.COMFORTABLE);
+    }
+
+    @Override
+    public KeyEmotion getKeyEmotion() {
+        return null;//todo
     }
 
     @Override

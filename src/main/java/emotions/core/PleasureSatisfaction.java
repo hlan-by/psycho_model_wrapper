@@ -1,5 +1,17 @@
 package emotions.core;
 
 public class PleasureSatisfaction implements CoreEmotion, Euphoric {
-    //todo new desire "To intensify consumption and expand it, with a certain addictive fixation on it."
+    double level;
+
+    public double getLevel() {
+        return level;
+    }
+
+    public void setLevel(double level) {
+        this.level = level;
+    }
+
+    public void setUnpleasureLevel() {
+        level = -10E19;//todo setup correct value
+    }
 }

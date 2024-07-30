@@ -2,6 +2,7 @@ package figures;
 
 import desires.Desire;
 import desires.SatisfactionLevel;
+import emotions.key.KeyEmotion;
 import percepts.Percept;
 
 import java.util.List;
@@ -88,5 +89,10 @@ public class SpecificFigure implements Figure {
 
     public SatisfactionLevel getSatisfactionLevel(Desire need) {
         return satisfactionLevels.getOrDefault(need, SatisfactionLevel.COMFORTABLE);
+    }
+
+    @Override
+    public KeyEmotion getKeyEmotion() {
+        return null;//todo
     }
 }

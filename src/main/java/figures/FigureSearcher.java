@@ -2,7 +2,7 @@ package figures;
 
 import ai_models.AIModelSearchFigure;
 import desires.Desire;
-import percepts.CombinatedPercept;
+import percepts.CombinedPercept;
 import percepts.Percept;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class FigureSearcher {
     private Figure[] figures;
     private List<Desire> desires;
 
-    public Figure find(CombinatedPercept combinatedPercept, List<Desire> desires, Figure... figures) {
+    public Figure find(CombinedPercept combinatedPercept, List<Desire> desires, Figure... figures) {
         return new AIModelSearchFigure(combinatedPercept, desires, figures).getFigureOrCreateNewOne();
     }
 }

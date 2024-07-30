@@ -1,9 +1,9 @@
 package desires;
 
-import feelings.Pleasure;
+import emotions.core.PleasureSatisfaction;
 
 public class ReproductionDesireBasic implements Desire {
-    private Pleasure pleasure;
+    private PleasureSatisfaction pleasureSatisfaction;
     private double impact;
     private double feedBackLevel;
     private double MAX_ALLOWED_IMPACT_LEVEL = 10E19;//todo setup correct value
@@ -11,8 +11,8 @@ public class ReproductionDesireBasic implements Desire {
     private double UNACCEPTABLE_HIGH_LEVEL = 10E15;//todo setup correct value. if more, produces dicomfort, unpleasure rise
     private double UNACCEPTABLE_LOW_LEVEL = 100;//todo setup correct value. if less, impact frustated, unpleasure rise
 
-    public Pleasure getPleasure() {
-        return pleasure;
+    public PleasureSatisfaction getPleasure() {
+        return pleasureSatisfaction;
     }
 
     public void setImpact(double impact) {
@@ -52,9 +52,9 @@ public class ReproductionDesireBasic implements Desire {
             impact -= feedBackLevel;
             if (impact > MAX_ALLOWED_IMPACT_LEVEL) {
                 impact = 0;
-                pleasure.setUnpleasureLevel();
+                pleasureSatisfaction.setUnpleasureLevel();
             }
-            pleasure.setLevel(pleasure.getLevel() + feedBackLevel - this.feedBackLevel);
+            pleasureSatisfaction.setLevel(pleasureSatisfaction.getLevel() + feedBackLevel - this.feedBackLevel);
             this.feedBackLevel = feedBackLevel;
         }
     }

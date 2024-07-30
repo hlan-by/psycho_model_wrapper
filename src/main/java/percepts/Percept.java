@@ -6,7 +6,5 @@ public interface Percept {
         return percept.getSignalLevel() > threshold;
     }
 
-    String getType();
-
     double getSignalLevel();
 }

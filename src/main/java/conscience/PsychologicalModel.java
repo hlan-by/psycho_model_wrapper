@@ -9,7 +9,12 @@ import feelings.Feeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
 import intentional_modules.IntentionalModule;
+import percepts.CombinedPercept;
 import percepts.Percept;
+import percepts.PerceptBuilder;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 /**Percept 1, which is one of the factors in the emergence of the foundational emotion Emotion 1, caused by Urge 1 and
  * associated with the intentional module Module 1, was united by attention into a single figure with Percept 2 (formed
@@ -51,7 +56,7 @@ public class PsychologicalModel {
         // Generate core emotion based on percepts and urge
         this.emotion1 = new EmotionReceiver(percept1, desire);
         // Combine percept1 and percept2 to a new Figure
-       Figure figure = combinePercepts(percept1, percept2);
+       CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
 
         // Generate key emotions based on percepts and urge
        //todo this.emotion2 = new EmotionCalculator(percept2, desire);
@@ -63,8 +68,16 @@ public class PsychologicalModel {
         createConnections();
     }
 
-    private Figure combinePercepts(Percept... percept) {
-        return attention.combinePerceptsToFigure(percept);
+    private CombinedPercept combinePercepts(Percept... percepts) {
+        PerceptBuilder builder = new PerceptBuilder();
+
+        // Add each percept to the builder with a unique ID
+        if (percepts.length > 0) {
+            Arrays.stream(percepts).forEach(p -> builder.addPercept(UUID.randomUUID().toString(), p));
+        }
+
+        // Build and return the CombinedPercept
+        return builder.build();
     }
 
     private void createConnections() {

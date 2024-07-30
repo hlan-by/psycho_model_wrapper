@@ -1,7 +1,13 @@
 package conscience;
 
+import emotions.core.CoreEmotion;
 import feelings.Feeling;
 import feelings.SpecificFeeling;
+import figures.Figure;
+import neuralnetwork.NeuralNetworkSelectFigureByAttension;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class ConsciousnessRunner implements Runnable {
     private static final long UPDATE_SELF_AWARE_ENTITY_PERIOD = 10;
@@ -34,7 +40,10 @@ public class ConsciousnessRunner implements Runnable {
 
     public static void main(String[] args) {
         // Usage example
-        IAm selfAwareEntity = new SelfAwareEntity();
+        CoreEmotion specificEmotion = null;
+        Set<Figure> figures = Collections.emptySet();
+        Attention attention = new Attention(null, new NeuralNetworkSelectFigureByAttension());
+        IAm selfAwareEntity = new SelfAwareEntity(specificEmotion, figures, attention);
 
         // Setup base feels
         Feeling initialFeel = new SpecificFeeling(); //todo setup parameters

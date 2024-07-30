@@ -6,11 +6,9 @@ import java.util.Map;
 // CombinedPercept can contain both simple percepts and other CombinedPercepts
 public class CombinedPercept implements Percept {
     private Map<String, Percept> percepts;
-    private String type;
     private double signalLevel;
 
-    public CombinedPercept(String type) {
-        this.type = type;
+    public CombinedPercept() {
         this.percepts = new HashMap<>();
         this.signalLevel = 0.0; // Default signal level
     }
@@ -33,11 +31,6 @@ public class CombinedPercept implements Percept {
     }
 
     @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
     public double getSignalLevel() {
         return signalLevel;
     }
@@ -45,8 +38,7 @@ public class CombinedPercept implements Percept {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("CombinedPercept{type=").append(type)
-                .append(", signalLevel=").append(signalLevel)
+        sb.append(", signalLevel=").append(signalLevel)
                 .append(", percepts={\n");
         for (Map.Entry<String, Percept> entry : percepts.entrySet()) {
             sb.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");

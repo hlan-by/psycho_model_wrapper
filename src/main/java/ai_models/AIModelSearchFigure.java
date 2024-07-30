@@ -2,15 +2,16 @@ package ai_models;
 
 import desires.Desire;
 import desires.SatisfactionLevel;
+import emotions.key.KeyEmotion;
 import figures.Figure;
-import percepts.CombinatedPercept;
+import percepts.CombinedPercept;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class AIModelSearchFigure implements Figure {
-    public AIModelSearchFigure(CombinatedPercept combinatedPercept, List<Desire> desire, Figure[] figures) {
+    public AIModelSearchFigure(CombinedPercept combinatedPercept, List<Desire> desire, Figure[] figures) {
 
     }
 
@@ -41,5 +42,10 @@ public class AIModelSearchFigure implements Figure {
     @Override
     public SatisfactionLevel getSatisfactionLevel(Desire need) {
         return null;
+    }
+
+    @Override
+    public KeyEmotion getKeyEmotion() {
+        return null;//todo
     }
 }

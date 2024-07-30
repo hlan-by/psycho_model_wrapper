@@ -4,8 +4,8 @@ package percepts;
 public class PerceptBuilder {
     private CombinedPercept combinedPercept;
 
-    public PerceptBuilder(String type) {
-        this.combinedPercept = new CombinedPercept(type);
+    public PerceptBuilder() {
+        this.combinedPercept = new CombinedPercept();
     }
 
     public PerceptBuilder addPercept(String key, Percept percept) {
