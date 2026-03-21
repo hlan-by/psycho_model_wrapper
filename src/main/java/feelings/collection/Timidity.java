@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class Timidity {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class Timidity extends SpecificFeeling {
+    public Timidity(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

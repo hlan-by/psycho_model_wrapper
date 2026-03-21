@@ -1,5 +1,10 @@
 package emotions.core;
 
-public class HumiliationFear  implements CoreEmotion, Dysphoric {
-    //todo desire "To freeze and then flee, detach, bypass, or destroy the source."
+import percepts.Percept;
+
+public class HumiliationFear extends BaseCoreEmotion implements Dysphoric {
+
+    public HumiliationFear(Percept percept) {
+        super(percept);
+    }
 }

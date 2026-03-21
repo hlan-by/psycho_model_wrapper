@@ -12,6 +12,9 @@ public class IntentionalModule {
     private String plan; // The action plan for achieving the goal
     private String currentAction; // The current action within the plan
     private String emotionalState; // The emotional state related to achieving the goal
+    
+    private Percept associatedPercept;
+    private Emotion associatedEmotion;
 
     // Constructor to initialize the intentional module
     public IntentionalModule() {
@@ -116,11 +119,19 @@ public class IntentionalModule {
         System.out.println("Emotional State: " + module.getEmotionalState());
     }
 
-    public void associatePercept(Percept percept1) {
-        //todo
+    public void associatePercept(Percept percept) {
+        this.associatedPercept = percept;
     }
 
-    public void associateEmotion(Emotion emotion1) {
-        //todo
+    public void associateEmotion(Emotion emotion) {
+        this.associatedEmotion = emotion;
+    }
+    
+    public Percept getAssociatedPercept() {
+        return associatedPercept;
+    }
+    
+    public Emotion getAssociatedEmotion() {
+        return associatedEmotion;
     }
 }

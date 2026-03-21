@@ -2,8 +2,10 @@ package conscience;
 
 import desires.Desire;
 import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
 import feelings.Feeling;
 import feelings.FeelingsMatrix;
+import feelings.SpecificFeeling;
 import figures.Figure;
 import figures.FigureBuilder;
 import neuralnetwork.NeuralNetworkSelectFigureByAttension;
@@ -92,5 +94,3 @@ public class Attention {
                 '}';
     }
 }
-
-

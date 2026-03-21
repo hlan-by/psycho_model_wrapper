@@ -4,67 +4,62 @@ import desires.Desire;
 import emotions.core.*;
 import percepts.Percept;
 
-public class EmotionReceiver implements CoreEmotion {
-    private final CoreEmotion emotion;
+public class EmotionReceiver {
 
-    public EmotionReceiver(Percept percept, Desire desire) {
-        this.emotion = searchEmotion(percept, desire);
-    }
-
-    private CoreEmotion searchEmotion(Percept percept, Desire desire) {
+    public static CoreEmotion create(Percept percept, Desire desire) {
         if (isContactWithObjectRisingExtremly()) {
-            return new Surprise();
+            return new Surprise(percept);
         }
         if (isAcceptableDesireRising()) {
-            return new LikingInterest();
+            return new LikingInterest(percept);
         }
         if (!isAcceptableDesireRising()) {
-            return new Sadness();
+            return new Sadness(percept);
         }
         if (isExcessiveDesireRising()) {
-            return new WrongnessDisgust();
+            return new WrongnessDisgust(percept);
         }
         if (!isExcessiveDesireRising()) {
-            return new PleasureSatisfaction();
+            return new PleasureSatisfaction(percept);
         }
         if (isFrustrationOfDesireRising()) {
-            return new HumiliationFear();
+            return new HumiliationFear(percept);
         }
         if (!isFrustrationOfDesireRising()) {
-            return new ReliefJoy();
+            return new ReliefJoy(percept);
         }
         if (!isAcceptableDesireRising() && (isFrustrationOfDesireRising() || isExcessiveDesireRising())
                 && isLikingInterestPresent() && (isHumiliationFearPresent() || isWrongnessDisgustPresent())) {
-            return new Anger();
+            return new Anger(percept);
         }
         return null;
     }
 
-    private boolean isContactWithObjectRisingExtremly() {
+    private static boolean isContactWithObjectRisingExtremly() {
         return false;
     }
 
-    private boolean isWrongnessDisgustPresent() {
+    private static boolean isWrongnessDisgustPresent() {
         return false;
     }
 
-    private boolean isHumiliationFearPresent() {
+    private static boolean isHumiliationFearPresent() {
         return false;
     }
 
-    private boolean isLikingInterestPresent() {
+    private static boolean isLikingInterestPresent() {
         return false;
     }
 
-    private boolean isFrustrationOfDesireRising() {
+    private static boolean isFrustrationOfDesireRising() {
         return false;
     }
 
-    private boolean isExcessiveDesireRising() {
+    private static boolean isExcessiveDesireRising() {
         return false;
     }
 
-    private boolean isAcceptableDesireRising() {
+    private static boolean isAcceptableDesireRising() {
         return false;
     }
 }

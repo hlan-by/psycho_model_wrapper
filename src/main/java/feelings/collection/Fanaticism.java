@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class Fanaticism {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class Fanaticism extends SpecificFeeling {
+    public Fanaticism(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

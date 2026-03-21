@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class Tenderness {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class Tenderness extends SpecificFeeling {
+    public Tenderness(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

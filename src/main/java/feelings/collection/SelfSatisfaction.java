@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class SelfSatisfaction {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class SelfSatisfaction extends SpecificFeeling {
+    public SelfSatisfaction(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

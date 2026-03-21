@@ -1,3 +1,9 @@
 package emotions.key;
 
-public class PleasureI implements KeyEmotion {}
+import figures.Figure;
+
+public class PleasureI extends BaseKeyEmotion {
+    public PleasureI(Figure... figures) {
+        super(figures);
+    }
+}

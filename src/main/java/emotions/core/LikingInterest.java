@@ -1,5 +1,9 @@
 package emotions.core;
 
-public class LikingInterest  implements CoreEmotion, Euphoric {
-    // todo new desire distract a stranger and bring the object closer
+import percepts.Percept;
+
+public class LikingInterest extends BaseCoreEmotion implements Euphoric {
+    public LikingInterest(Percept percept) {
+        super(percept);
+    }
 }

@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class Revulsion {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class Revulsion extends SpecificFeeling {
+    public Revulsion(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

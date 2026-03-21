@@ -1,5 +1,10 @@
 package emotions.core;
 
-public class Anger implements CoreEmotion, Transient {
-    //todo new desire "To destroy the object causing fear or disgust and to attack the contextually present figures."
+import percepts.Percept;
+
+public class Anger extends BaseCoreEmotion implements Transient {
+
+    public Anger(Percept percept) {
+        super(percept);
+    }
 }

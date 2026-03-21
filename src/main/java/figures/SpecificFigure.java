@@ -2,19 +2,37 @@ package figures;
 
 import desires.Desire;
 import desires.SatisfactionLevel;
+import emotions.Affect;
+import emotions.core.CoreEmotion;
 import emotions.key.KeyEmotion;
 import percepts.Percept;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SpecificFigure implements Figure {
+    private String id;
     private Percept percept;
-    private Map<Desire, Integer> needsSatisfaction;
-    private Map<Desire, SatisfactionLevel> satisfactionLevels;
+    private Map<Desire, Integer> needsSatisfaction = new HashMap<>();
+    private Map<Desire, SatisfactionLevel> satisfactionLevels = new HashMap<>();
     private Figure[] figures;
     private double intentionalValue;
+    private KeyEmotion keyEmotion;
+    private CoreEmotion baseEmotion;
+    private Affect affect;
+    private Desire sourceDrive;
+    private long timestamp;
+    private int activationCount;
+    private List<Desire> desires;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Map<Desire, Integer> getNeedsSatisfaction() {
         return needsSatisfaction;
@@ -67,13 +85,60 @@ public class SpecificFigure implements Figure {
         this.desires = desires;
         return this;
     }
-    private List<Desire> desires;
 
     public Figure get() {
         return this;
     }
 
+    public SpecificFigure setKeyEmotion(KeyEmotion keyEmotion) {
+        this.keyEmotion = keyEmotion;
+        return this;
+    }
 
+    public CoreEmotion getBaseEmotion() {
+        return baseEmotion;
+    }
+
+    public SpecificFigure setBaseEmotion(CoreEmotion baseEmotion) {
+        this.baseEmotion = baseEmotion;
+        return this;
+    }
+
+    public Affect getAffect() {
+        return affect;
+    }
+
+    public SpecificFigure setAffect(Affect affect) {
+        this.affect = affect;
+        return this;
+    }
+
+    public Desire getSourceDrive() {
+        return sourceDrive;
+    }
+
+    public SpecificFigure setSourceDrive(Desire sourceDrive) {
+        this.sourceDrive = sourceDrive;
+        return this;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public SpecificFigure setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+        return this;
+    }
+
+    public int getActivationCount() {
+        return activationCount;
+    }
+
+    public SpecificFigure setActivationCount(int activationCount) {
+        this.activationCount = activationCount;
+        return this;
+    }
 
     public void setNeedSatisfaction(Desire need, int value) {
         needsSatisfaction.put(need, value);
@@ -93,6 +158,6 @@ public class SpecificFigure implements Figure {
 
     @Override
     public KeyEmotion getKeyEmotion() {
-        return null;//todo
+        return keyEmotion;
     }
 }

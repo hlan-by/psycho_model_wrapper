@@ -1,5 +1,9 @@
 package emotions.core;
 
-public class ReliefJoy implements CoreEmotion, Euphoric {
-    //todo desire "In active actions, the desire to share, involve communicative partners."
+import percepts.Percept;
+
+public class ReliefJoy extends BaseCoreEmotion implements Euphoric {
+    public ReliefJoy(Percept percept) {
+        super(percept);
+    }
 }

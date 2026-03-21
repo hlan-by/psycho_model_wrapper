@@ -1,4 +1,6 @@
 package emotions.key;
 
-public interface KeyEmotion {
+import emotions.Emotion;
+
+public interface KeyEmotion extends Emotion {
 }

@@ -1,4 +1,9 @@
 package emotions.key;
 
-public class AngerOther implements KeyEmotion {
+import figures.Figure;
+
+public class AngerOther extends BaseKeyEmotion {
+    public AngerOther(Figure... figures) {
+        super(figures);
+    }
 }

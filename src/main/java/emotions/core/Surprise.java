@@ -1,5 +1,10 @@
 package emotions.core;
 
-public class Surprise  implements CoreEmotion, Transient {
-    //todo desire "Switch focus to the source of surprise and recognize it."
+import percepts.Percept;
+
+public class Surprise extends BaseCoreEmotion implements Transient {
+
+    public Surprise(Percept percept) {
+        super(percept);
+    }
 }

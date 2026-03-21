@@ -1,3 +1,11 @@
 package feelings.collection;
 
-public class SelfAbsorption {}
+import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
+import feelings.SpecificFeeling;
+
+public class SelfAbsorption extends SpecificFeeling {
+    public SelfAbsorption(CoreEmotion basicEmotion, KeyEmotion keyEmotion) {
+        super(basicEmotion, keyEmotion);
+    }
+}

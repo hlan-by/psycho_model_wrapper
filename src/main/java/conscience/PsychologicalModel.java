@@ -8,6 +8,7 @@ import emotions.key.KeyEmotion;
 import feelings.Feeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
+import figures.SpecificFigure;
 import intentional_modules.IntentionalModule;
 import percepts.CombinedPercept;
 import percepts.Percept;
@@ -32,6 +33,7 @@ import java.util.UUID;
 public class PsychologicalModel {
 
     private final Attention attention;
+    private final Thinking thinking;
     private Percept percept1;
     private Percept percept2;
     private CoreEmotion emotion1;
@@ -44,6 +46,7 @@ public class PsychologicalModel {
 
     public PsychologicalModel(Percept percept1, Percept percept2, Desire desire, Attention attention) {
         this.attention = attention;
+        this.thinking = new Thinking(attention);
         this.percept1 = percept1;
         this.percept2 = percept2;
         this.desire = desire;
@@ -54,15 +57,22 @@ public class PsychologicalModel {
 
     private void processPercepts() {
         // Generate core emotion based on percepts and urge
-        this.emotion1 = new EmotionReceiver(percept1, desire);
+        this.emotion1 = EmotionReceiver.create(percept1, desire);
+        
         // Combine percept1 and percept2 to a new Figure
-       CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
+        CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
 
-        // Generate key emotions based on percepts and urge
-       //todo this.emotion2 = new EmotionCalculator(percept2, desire);
+        // Simulate creating figures from percepts for emotion calculation
+        Figure figure1 = thinking.process(percept1);
+        Figure figure2 = thinking.process(percept2);
+
+        // Generate key emotions based on figures
+        this.emotion2 = EmotionCalculator.calculateEmotion(figure1, figure2);
 
         // Create feeling based on combined emotions
-        this.feeling = new SpecificFeeling().setBasicEmotion(emotion1).setKeyEmotion(emotion2);
+        if (emotion1 != null && emotion2 != null) {
+            this.feeling = new SpecificFeeling(emotion1, emotion2);
+        }
 
         // Create connections between percepts and modules
         createConnections();
@@ -85,8 +95,8 @@ public class PsychologicalModel {
         module1.associatePercept(percept1);
         module2.associatePercept(percept2);
 
-      //todo  module1.associateEmotion(emotion1);
-      //todo  module2.associateEmotion(emotion2);
+        module1.associateEmotion(emotion1);
+        module2.associateEmotion(emotion2);
 
         // Cross-assign significance between percepts
         module1.associatePercept(percept2);

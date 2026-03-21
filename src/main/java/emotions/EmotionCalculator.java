@@ -19,7 +19,7 @@ import java.util.List;
 public class EmotionCalculator {
 
     // Method for calculating emotions
-    static KeyEmotion calculateEmotion(Figure figure1, Figure figure2) {
+    public static KeyEmotion calculateEmotion(Figure figure1, Figure figure2) {
         List<Desire> desires = Arrays.asList(new ExpansionDesireBasic(), new ProtectionDesireBasic(), new RecognitionDesireBasic()
                 , new ConsumptionDesireBasic(), new ReproductionDesireBasic());
         int totalSatisfaction = 0;
@@ -42,26 +42,26 @@ public class EmotionCalculator {
 
         if (averageSatisfaction > 75) {
             if (averageDifference < 20) {
-                return new JoyI();
+                return new JoyI(figure1, figure2);
             } else {
-                return new PleasureI();
+                return new PleasureI(figure1, figure2);
             }
         } else if (averageSatisfaction < 25) {
             if (averageDifference > 50) {
-                return new FearI();
+                return new FearI(figure1, figure2);
             } else {
-                return new SadnessI();
+                return new SadnessI(figure1, figure2);
             }
         } else {
             if (averageDifference > 50) {
-                return new AngerI();
+                return new AngerI(figure1, figure2);
             } else if (averageDifference > 20) {
-                return new SurpriseI();
+                return new SurpriseI(figure1, figure2);
             } else {
                 if (containsExcessiveOrInsufficient(figure1) || containsExcessiveOrInsufficient(figure2)) {
-                    return new DisgustI();
+                    return new DisgustI(figure1, figure2);
                 }
-                return new InterestI();
+                return new InterestI(figure1, figure2);
             }
         }
     }

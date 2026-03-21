@@ -1,5 +1,7 @@
 package emotions.core;
 
-public interface CoreEmotion {
+import emotions.Emotion;
+
+public interface CoreEmotion extends Emotion {
 
 }

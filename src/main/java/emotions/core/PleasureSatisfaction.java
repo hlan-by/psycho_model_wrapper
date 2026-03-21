@@ -1,7 +1,13 @@
 package emotions.core;
 
-public class PleasureSatisfaction implements CoreEmotion, Euphoric {
+import percepts.Percept;
+
+public class PleasureSatisfaction extends BaseCoreEmotion implements Euphoric {
     double level;
+
+    public PleasureSatisfaction(Percept percept) {
+        super(percept);
+    }
 
     public double getLevel() {
         return level;

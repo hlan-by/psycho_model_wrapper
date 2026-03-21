@@ -1,3 +1,10 @@
 package emotions.key;
 
-public class SurpriseOther implements KeyEmotion {}
+import figures.Figure;
+
+public class SurpriseOther extends BaseKeyEmotion {
+    public SurpriseOther(Figure... figures) {
+        super(figures);
+    }
+
+}
