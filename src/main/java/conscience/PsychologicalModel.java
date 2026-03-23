@@ -63,8 +63,8 @@ public class PsychologicalModel {
         CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
 
         // Simulate creating figures from percepts for emotion calculation
-        Figure figure1 = thinking.process(percept1);
-        Figure figure2 = thinking.process(percept2);
+        Figure figure1 = thinking.process(percept1, desire);
+        Figure figure2 = thinking.process(percept2, desire);
 
         // Generate key emotions based on figures
         this.emotion2 = EmotionCalculator.calculateEmotion(figure1, figure2);

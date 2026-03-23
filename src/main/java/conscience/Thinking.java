@@ -1,5 +1,7 @@
 package conscience;
 
+import desires.Desire;
+import emotions.Affect;
 import feelings.Feeling;
 import figures.Figure;
 import figures.SpecificFigure;
@@ -18,16 +20,39 @@ public class Thinking {
         return new SpecificFigure().setPercept(percept);
     }
 
-    public Figure process(List<Percept> percepts, Feeling previousFeeling) {
-        // Simple logic: if previous feeling was negative, try to change focus
-        // If positive, reinforce current focus
-        // This is a placeholder for actual cognitive logic
+    public Figure process(Percept percept, Desire activeDesire) {
+        SpecificFigure figure = new SpecificFigure()
+                .setPercept(percept)
+                .setSourceDrive(activeDesire);
 
-        // For now, return a new figure based on percepts
-        // In a real implementation, this would involve more complex logic
-        if (percepts != null && !percepts.isEmpty()) {
-             return new SpecificFigure().setPercept(percepts.get(0));
-        }
-        return null;
+        // 1. первичная оценка
+        double initialValue = estimateValence(percept, activeDesire);
+        double initialEnergy = estimateEnergy(percept);
+
+        figure.setAffect(new Affect(initialValue, initialEnergy));
+
+        // 2. оценка удовлетворения позыва
+        int satisfaction = estimateSatisfaction(percept, activeDesire);
+        figure.setNeedSatisfaction(activeDesire, satisfaction);
+
+        // 3. первичная значимость
+        figure.setIntentionalValue(initialValue * initialEnergy);
+
+        return figure;
+    }
+
+    private double estimateValence(Percept percept, Desire desire) {
+        // Placeholder: Assuming positive valence if desire is active
+        return 0.5;
+    }
+
+    private double estimateEnergy(Percept percept) {
+        // Placeholder: Assuming moderate energy
+        return 0.5;
+    }
+
+    private int estimateSatisfaction(Percept percept, Desire desire) {
+        // Placeholder: Assuming 50% satisfaction
+        return 50;
     }
 }
