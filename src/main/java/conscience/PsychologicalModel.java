@@ -10,11 +10,15 @@ import feelings.SpecificFeeling;
 import figures.Figure;
 import figures.SpecificFigure;
 import intentional_modules.IntentionalModule;
+import memories.MemoryService;
+import memories.MemoryServiceImpl;
+import memories.VectorDatabaseImpl;
 import percepts.CombinedPercept;
 import percepts.Percept;
 import percepts.PerceptBuilder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 /**Percept 1, which is one of the factors in the emergence of the foundational emotion Emotion 1, caused by Urge 1 and
@@ -33,20 +37,21 @@ import java.util.UUID;
 public class PsychologicalModel {
 
     private final Attention attention;
-    private final Thinking thinking;
-    private Percept percept1;
-    private Percept percept2;
+    private final MemoryService memory;
+    private Thinking thinking;
+    private final Percept percept1;
+    private final Percept percept2;
     private CoreEmotion emotion1;
     private KeyEmotion emotion2;
-    private Desire desire;
-    private IntentionalModule module1;
-    private IntentionalModule module2;
+    private final Desire desire;
+    private final IntentionalModule module1;
+    private final IntentionalModule module2;
     private Feeling feeling;
 
 
     public PsychologicalModel(Percept percept1, Percept percept2, Desire desire, Attention attention) {
         this.attention = attention;
-        this.thinking = new Thinking(attention);
+        this.memory = new MemoryServiceImpl(new VectorDatabaseImpl());
         this.percept1 = percept1;
         this.percept2 = percept2;
         this.desire = desire;
@@ -59,12 +64,20 @@ public class PsychologicalModel {
         // Generate core emotion based on percepts and urge
         this.emotion1 = EmotionReceiver.create(percept1, desire);
         
+        // Initialize Thinking with current context
+        this.thinking = new Thinking(
+            attention, 
+            memory, 
+            emotion1, 
+            Collections.singletonList(desire)
+        );
+        
         // Combine percept1 and percept2 to a new Figure
         CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
 
         // Simulate creating figures from percepts for emotion calculation
-        Figure figure1 = thinking.process(percept1, desire);
-        Figure figure2 = thinking.process(percept2, desire);
+        Figure figure1 = thinking.process(percept1);
+        Figure figure2 = thinking.process(percept2);
 
         // Generate key emotions based on figures
         this.emotion2 = EmotionCalculator.calculateEmotion(figure1, figure2);

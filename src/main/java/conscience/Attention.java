@@ -1,6 +1,7 @@
 package conscience;
 
 import desires.Desire;
+import emotions.Affect;
 import emotions.core.CoreEmotion;
 import emotions.key.KeyEmotion;
 import feelings.Feeling;
@@ -32,6 +33,23 @@ public class Attention {
     public void setFocus(String focus) {
         this.focus = focus;
     }
+    
+    public void apply(Figure figure) {
+        // Boost intentional value
+        double currentValue = figure.getIntentionalValue();
+        figure.setIntentionalValue(currentValue * 1.2 + 10);
+
+        // Boost energy if affect is present
+        Affect currentAffect = figure.getAffect();
+        if (currentAffect != null) {
+            double newEnergy = currentAffect.getEnergy() * 1.1; // 10% boost
+            figure.setAffect(new Affect(currentAffect.getValue(), newEnergy));
+        }
+        
+        // Prioritize this figure (placeholder logic)
+        // In a real system, this might involve updating a priority queue or focus list
+    }
+
 
     public Feeling getResultingEmotion(CoreEmotion coreEmotion, Set<Figure> figures) {
         for (Figure figure : figures) {
