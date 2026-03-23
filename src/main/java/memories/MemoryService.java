@@ -40,4 +40,7 @@ public interface MemoryService {
         KeyEmotion emotion,
         int topK
     );
+
+    // New method for saving or updating
+    void saveOrUpdate(Figure figure);
 }

@@ -13,6 +13,7 @@ import neuralnetwork.NeuralNetworkSelectFigureByAttension;
 import percepts.Percept;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -48,6 +49,12 @@ public class Attention {
         
         // Prioritize this figure (placeholder logic)
         // In a real system, this might involve updating a priority queue or focus list
+    }
+
+    public List<Percept> prioritize(Percept... percepts) {
+        // Simple implementation: return in the given order.
+        // A real implementation would use the 'focus' to reorder.
+        return Arrays.asList(percepts);
     }
 
 

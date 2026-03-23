@@ -111,6 +111,20 @@ public class MemoryServiceImpl implements MemoryService {
         probe.setKeyEmotion(emotion);
         return findSimilar(probe, topK);
     }
+    
+    @Override
+    public void saveOrUpdate(Figure figure) {
+        if (figure instanceof SpecificFigure) {
+            SpecificFigure specificFigure = (SpecificFigure) figure;
+            if (specificFigure.getId() != null) {
+                update(specificFigure);
+            } else {
+                save(specificFigure);
+            }
+        } else {
+            throw new IllegalArgumentException("MemoryService only supports SpecificFigure");
+        }
+    }
 
     private void validateFigure(SpecificFigure figure) {
         if (figure.getPercept() == null) {

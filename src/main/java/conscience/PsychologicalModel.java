@@ -1,6 +1,7 @@
 package conscience;
 
 import desires.Desire;
+import emotions.Affect;
 import emotions.EmotionCalculator;
 import emotions.EmotionReceiver;
 import emotions.core.CoreEmotion;
@@ -8,7 +9,6 @@ import emotions.key.KeyEmotion;
 import feelings.Feeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
-import figures.SpecificFigure;
 import intentional_modules.IntentionalModule;
 import memories.MemoryService;
 import memories.MemoryServiceImpl;
@@ -19,21 +19,9 @@ import percepts.PerceptBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-/**Percept 1, which is one of the factors in the emergence of the foundational emotion Emotion 1, caused by Urge 1 and
- * associated with the intentional module Module 1, was united by attention into a single figure with Percept 2 (formed
- * by perception or thinking), associated with the intentional module Module 2. As a result, the key emotion Emotion 2 emerged,
- * also caused by the initiating Urge 1. The presence of two affects from the elements of the figure leads to their alignment,
- * which is subjectively perceived as a feeling: thus, Urge 1, activated by Percept 1, connects with Percept 2, cross-assigning
- * significance from Percept 1 to Percept 2. This forms a connection complex in the excitome: "Urge 1-(Module 1 (Emotion 1),
- * Module 2 (Emotion 2))*feeling - Percept 1, Percept 2." As a result, in addition to indexing the significances of
- * Modules 1 and 2 by Urge 1, new connections "Percept 1-Module 2" and "Percept 2-Module 1" are formed, cross-linking
- * the percepts through the intentional: regarding one Urge 1, the significance of Percept 1 has the same nature as the
- * significance of Percept 2, and therefore, they can serve as values for each other, symbolize, and denote each other.
- * For example, a person's personal item acts as a sign of that person for us, or an angry grimace indicates aggression.
- * An association arises, which can be weakly conscious, playing its role in the formation of unclear preferences of
- * a person and later becoming conscious, or clearly conscious and recognized as a logical connection.*/
 public class PsychologicalModel {
 
     private final Attention attention;
@@ -57,79 +45,101 @@ public class PsychologicalModel {
         this.desire = desire;
         this.module1 = new IntentionalModule();
         this.module2 = new IntentionalModule();
-        processPercepts();
+        runCycle();
     }
 
-    private void processPercepts() {
-        // Generate core emotion based on percepts and urge
-        this.emotion1 = EmotionReceiver.create(percept1, desire);
-        
-        // Initialize Thinking with current context
+    public void runCycle() {
+        // Prioritize percepts using attention
+        List<Percept> prioritizedPercepts = attention.prioritize(percept1, percept2);
+        Percept primaryPercept = prioritizedPercepts.get(0);
+        Percept secondaryPercept = prioritizedPercepts.get(1);
+
+        // Initialize Thinking with a null CoreEmotion for now
         this.thinking = new Thinking(
-            attention, 
-            memory, 
-            emotion1, 
+            attention,
+            memory,
+            null, // CoreEmotion is not yet known
             Collections.singletonList(desire)
         );
+
+        // Process percepts into figures
+        Figure figure1 = thinking.process(primaryPercept);
+        Figure figure2 = thinking.process(secondaryPercept);
+
+        // Now that we have an enriched figure, we can generate the CoreEmotion
+        this.emotion1 = EmotionReceiver.create(figure1, desire);
         
-        // Combine percept1 and percept2 to a new Figure
-        CombinedPercept combinedPercept = combinePercepts(percept1, percept2);
+        // Update the thinking context with the new CoreEmotion
+        this.thinking = new Thinking(
+            attention,
+            memory,
+            emotion1,
+            Collections.singletonList(desire)
+        );
 
-        // Simulate creating figures from percepts for emotion calculation
-        Figure figure1 = thinking.process(percept1);
-        Figure figure2 = thinking.process(percept2);
+        // Use the combined percept to create a third figure
+        CombinedPercept combinedPercept = combinePercepts(primaryPercept, secondaryPercept);
+        Figure combinedFigure = thinking.process(combinedPercept);
 
-        // Generate key emotions based on figures
-        this.emotion2 = EmotionCalculator.calculateEmotion(figure1, figure2);
+        // Generate key emotion based on the interaction of figures
+        this.emotion2 = EmotionCalculator.calculateEmotion(figure1, combinedFigure);
 
         // Create feeling based on combined emotions
         if (emotion1 != null && emotion2 != null) {
             this.feeling = new SpecificFeeling(emotion1, emotion2);
+            // Apply the feeling to update the figures and memory
+            applyFeeling(this.feeling, figure1, figure2, combinedFigure);
         }
 
         // Create connections between percepts and modules
         createConnections();
     }
 
+    private void applyFeeling(Feeling feeling, Figure... figures) {
+        for (Figure figure : figures) {
+            // a. Update Affect
+            Affect currentAffect = figure.getAffect();
+            Affect feelingAffect = feeling.getAffect();
+            if (currentAffect != null && feelingAffect != null) {
+                Affect updatedAffect = new Affect(
+                    (currentAffect.getValue() + feelingAffect.getValue()) / 2,
+                    currentAffect.getEnergy() + feelingAffect.getEnergy()
+                );
+                figure.setAffect(updatedAffect);
+            }
+
+            // b. Update Intentional Value
+            figure.setIntentionalValue(figure.getIntentionalValue() + feeling.getAffect().getEnergy());
+
+            // c. Strengthen connections (by increasing activation count)
+            figure.setActivationCount(figure.getActivationCount() + 1);
+
+            // d. Update Timestamp
+            figure.setTimestamp(System.currentTimeMillis());
+
+            // Persist changes to memory
+            memory.saveOrUpdate(figure);
+        }
+    }
+
     private CombinedPercept combinePercepts(Percept... percepts) {
         PerceptBuilder builder = new PerceptBuilder();
-
-        // Add each percept to the builder with a unique ID
         if (percepts.length > 0) {
             Arrays.stream(percepts).forEach(p -> builder.addPercept(UUID.randomUUID().toString(), p));
         }
-
-        // Build and return the CombinedPercept
         return builder.build();
     }
 
     private void createConnections() {
-        // Logic to create connections between percepts and intentional modules
         module1.associatePercept(percept1);
         module2.associatePercept(percept2);
-
         module1.associateEmotion(emotion1);
         module2.associateEmotion(emotion2);
-
-        // Cross-assign significance between percepts
         module1.associatePercept(percept2);
         module2.associatePercept(percept1);
-
-        System.out.println("Creating connections between modules and percepts.");
     }
 
     public Feeling getFeeling() {
         return feeling;
-    }
-
-    public static void main(String[] args) {
-       // Percept percept1 = new Percept("Percept 1");
-       // Percept percept2 = new Percept("Percept 2");
-      //  Desire urge1 = new ConsumptionDesireBasic("Urge 1");
-
-      //  PsychologicalModel model = new PsychologicalModel(percept1, percept2, urge1);
-      //  Feeling resultingFeeling = model.getFeeling();
-
-      //  System.out.println("Resulting feeling: " + resultingFeeling);
     }
 }
