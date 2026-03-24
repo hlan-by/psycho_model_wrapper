@@ -8,6 +8,7 @@ import emotions.Affect;
 import emotions.EmotionReceiver;
 import emotions.core.CoreEmotion;
 import feelings.Feeling;
+import feelings.SelfFeeling;
 import figures.Figure;
 import figures.SpecificFigure;
 import memories.MemoryService;
@@ -25,7 +26,8 @@ public class IntentionalModule {
     private Figure target;
     private Desire sourceDrive; // Dominant desire
     private List<Desire> desires;
-    private Feeling feeling;
+    private Feeling perceptFeeling;
+    private SelfFeeling selfFeeling;
 
     private Goal goal;
     private double motivation;
@@ -34,9 +36,10 @@ public class IntentionalModule {
 
     private final MemoryService memory;
 
-    public IntentionalModule(List<Figure> figures, List<Desire> desires, Feeling feeling, MemoryService memory) {
+    public IntentionalModule(List<Figure> figures, List<Desire> desires, Feeling perceptFeeling, SelfFeeling selfFeeling, MemoryService memory) {
         this.desires = desires;
-        this.feeling = feeling;
+        this.perceptFeeling = perceptFeeling;
+        this.selfFeeling = selfFeeling;
         this.memory = memory;
         
         // 1. Select Target (First, independent of specific desire for now, based on salience)
@@ -46,11 +49,11 @@ public class IntentionalModule {
         this.sourceDrive = selectDominantDesire(desires, target);
 
         // 3. Compute Motivation (Weighted by relevance)
-        this.motivation = computeMotivation(feeling, desires, target);
+        this.motivation = computeMotivation(perceptFeeling, selfFeeling, desires, target);
         
         // 4. Resolve Goal
         if (target != null && sourceDrive != null) {
-            this.goal = resolveGoal(target, sourceDrive, feeling);
+            this.goal = resolveGoal(target, sourceDrive, perceptFeeling);
             
             // 5. Build Plan
             this.plan = buildPlan(this.goal, memory);
@@ -87,12 +90,6 @@ public class IntentionalModule {
                 .max(Comparator.comparingDouble(d -> {
                     double tension = d.getImpact() - d.getFeedBackLevel();
                     double relevance = weights.getOrDefault(d, (target == null ? 1.0 : 0.0));
-                    // If target is null, treat all equally (relevance 1.0). 
-                    // If target exists but has no weight for this desire, relevance is 0.
-                    // Wait, if relevance is 0, we might ignore valid desires.
-                    // Let's use a small epsilon or fallback logic.
-                    // Or assume target selection implies relevance.
-                    // For robustness: if weights map is empty (new figure), assume uniform relevance.
                     if (weights.isEmpty()) relevance = 1.0;
                     
                     return tension * relevance;
@@ -100,24 +97,29 @@ public class IntentionalModule {
                 .orElse(desires.get(0));
     }
 
-    private double computeMotivation(Feeling feeling, List<Desire> desires, Figure target) {
+    private double computeMotivation(Feeling perceptFeeling, SelfFeeling selfFeeling, List<Desire> desires, Figure target) {
         double motivation = 0.0;
         
-        if (desires == null || target == null) {
-             // Fallback to feeling energy if context missing
-             return (feeling != null && feeling.getAffect() != null) ? feeling.getAffect().getEnergy() : 0.0;
+        // Base motivation from perceptual feeling
+        if (perceptFeeling != null && perceptFeeling.getAffect() != null) {
+            motivation += perceptFeeling.getAffect().getEnergy();
+        }
+        
+        // Add motivation from self-feeling (confidence/energy)
+        if (selfFeeling != null && selfFeeling.getAffect() != null) {
+            motivation += selfFeeling.getAffect().getEnergy();
         }
 
-        Map<Desire, Double> weights = target.getDriveWeights();
-        if (weights.isEmpty()) {
-             // If no weights, use feeling energy as base
-             return (feeling != null && feeling.getAffect() != null) ? feeling.getAffect().getEnergy() : 0.0;
-        }
-
-        for (Desire d : desires) {
-            double tension = d.getImpact() - d.getFeedBackLevel();
-            double relevance = weights.getOrDefault(d, 0.0);
-            motivation += tension * relevance;
+        // Add motivation from desires
+        if (desires != null && target != null) {
+            Map<Desire, Double> weights = target.getDriveWeights();
+            if (!weights.isEmpty()) {
+                for (Desire d : desires) {
+                    double tension = d.getImpact() - d.getFeedBackLevel();
+                    double relevance = weights.getOrDefault(d, 0.0);
+                    motivation += tension * relevance;
+                }
+            }
         }
         
         return motivation;
@@ -260,7 +262,13 @@ public class IntentionalModule {
     }
 
     private boolean shouldReplan(ActionResult result) {
-        return result.getSuccessDelta() < 0;
+        // If selfFeeling is negative, increase replanning sensitivity
+        double threshold = 0;
+        if (selfFeeling != null && selfFeeling.getAffect().getValue() < 0) {
+            threshold = 0.2; // Require strictly positive result to avoid replanning
+        }
+        
+        return result.getSuccessDelta() < threshold;
     }
 
     // Getters

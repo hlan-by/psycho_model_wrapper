@@ -7,6 +7,7 @@ import emotions.EmotionReceiver;
 import emotions.core.CoreEmotion;
 import emotions.key.KeyEmotion;
 import feelings.Feeling;
+import feelings.SelfFeeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
 import intentional_modules.Action;
@@ -29,6 +30,7 @@ public class PsychologicalModel {
     private final Attention attention;
     private final MemoryService memory;
     private Thinking thinking;
+    private final SelfEngine selfEngine; // New SelfEngine
     private final Percept percept1;
     private final Percept percept2;
     private CoreEmotion emotion1;
@@ -37,11 +39,13 @@ public class PsychologicalModel {
     // IntentionalModules are now created per cycle as they depend on current state
     private IntentionalModule activeModule;
     private Feeling feeling;
+    private SelfFeeling selfFeeling; // Store current self-feeling
 
 
     public PsychologicalModel(Percept percept1, Percept percept2, Desire desire, Attention attention) {
         this.attention = attention;
         this.memory = new MemoryServiceImpl(new VectorDatabaseImpl());
+        this.selfEngine = new SelfEngine(); // Initialize SelfEngine
         this.percept1 = percept1;
         this.percept2 = percept2;
         this.desire = desire;
@@ -91,11 +95,15 @@ public class PsychologicalModel {
             // Apply the feeling to update the figures and memory
             applyFeeling(this.feeling, figure1, figure2, combinedFigure);
             
-            // Activate Intentional Module with multiple desires (single in this case, wrapped)
+            // Build MindState and update SelfFeeling
             List<Figure> availableFigures = Arrays.asList(figure1, figure2, combinedFigure);
             List<Desire> desires = Collections.singletonList(desire);
             
-            this.activeModule = new IntentionalModule(availableFigures, desires, feeling, memory);
+            MindState currentMindState = new MindState(availableFigures, this.feeling, desires);
+            this.selfFeeling = selfEngine.update(currentMindState);
+            
+            // Activate Intentional Module with both perceptual feeling and self-feeling
+            this.activeModule = new IntentionalModule(availableFigures, desires, feeling, selfFeeling, memory);
             
             // Execute Action
             Action nextAction = activeModule.nextAction();
