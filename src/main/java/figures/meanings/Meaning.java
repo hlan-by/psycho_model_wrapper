@@ -2,10 +2,15 @@ package figures.meanings;
 
 import desires.Desire;
 import desires.SatisfactionLevel;
+import emotions.Affect;
+import emotions.core.CoreEmotion;
 import emotions.key.KeyEmotion;
 import figures.Figure;
+import intentional_modules.Action;
+import intentional_modules.Plan;
 import percepts.Percept;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +21,12 @@ public class Meaning implements Figure {
     private Percept percept;
     private Map<Desire, Integer> needsSatisfaction;
     private Map<Desire, SatisfactionLevel> satisfactionLevels;
+    private double intentionalValue;
+    private Affect affect;
+    private Desire sourceDrive;
+    private CoreEmotion baseEmotion;
+    private long timestamp;
+    private int activationCount;
 
     public Meaning(String symbol, Figure referent) {
         this.symbol = symbol;
@@ -68,6 +79,106 @@ public class Meaning implements Figure {
     @Override
     public KeyEmotion getKeyEmotion() {
         return null;//todo
+    }
+
+    @Override
+    public double getIntentionalValue() {
+        return intentionalValue;
+    }
+
+    @Override
+    public void setIntentionalValue(double value) {
+        this.intentionalValue = value;
+    }
+
+    @Override
+    public Affect getAffect() {
+        return affect;
+    }
+
+    @Override
+    public Figure setAffect(Affect affect) {
+        this.affect = affect;
+        return this;
+    }
+
+    @Override
+    public Desire getSourceDrive() {
+        return sourceDrive;
+    }
+
+    @Override
+    public Figure setSourceDrive(Desire sourceDrive) {
+        this.sourceDrive = sourceDrive;
+        return this;
+    }
+
+    @Override
+    public CoreEmotion getBaseEmotion() {
+        return baseEmotion;
+    }
+
+    @Override
+    public Figure setBaseEmotion(CoreEmotion baseEmotion) {
+        this.baseEmotion = baseEmotion;
+        return this;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public Figure setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+        return this;
+    }
+
+    @Override
+    public int getActivationCount() {
+        return activationCount;
+    }
+
+    @Override
+    public Figure setActivationCount(int count) {
+        this.activationCount = count;
+        return this;
+    }
+
+    @Override
+    public Plan getLastPlan() {
+        return null;
+    }
+
+    @Override
+    public Figure setLastPlan(Plan plan) {
+        return this;
+    }
+
+    @Override
+    public Action getLastAction() {
+        return null;
+    }
+
+    @Override
+    public Figure setLastAction(Action action) {
+        return this;
+    }
+
+    @Override
+    public Map<Desire, Double> getDriveWeights() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<Desire, Double> getLastDriveImpact() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Figure setLastDriveImpact(Map<Desire, Double> impact) {
+        return this;
     }
 
     @Override

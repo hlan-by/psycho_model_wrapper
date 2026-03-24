@@ -9,6 +9,8 @@ import emotions.key.KeyEmotion;
 import feelings.Feeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
+import intentional_modules.Action;
+import intentional_modules.ActionResult;
 import intentional_modules.IntentionalModule;
 import memories.MemoryService;
 import memories.MemoryServiceImpl;
@@ -32,8 +34,8 @@ public class PsychologicalModel {
     private CoreEmotion emotion1;
     private KeyEmotion emotion2;
     private final Desire desire;
-    private final IntentionalModule module1;
-    private final IntentionalModule module2;
+    // IntentionalModules are now created per cycle as they depend on current state
+    private IntentionalModule activeModule;
     private Feeling feeling;
 
 
@@ -43,8 +45,7 @@ public class PsychologicalModel {
         this.percept1 = percept1;
         this.percept2 = percept2;
         this.desire = desire;
-        this.module1 = new IntentionalModule();
-        this.module2 = new IntentionalModule();
+        // Modules initialized in cycle
         runCycle();
     }
 
@@ -89,10 +90,28 @@ public class PsychologicalModel {
             this.feeling = new SpecificFeeling(emotion1, emotion2);
             // Apply the feeling to update the figures and memory
             applyFeeling(this.feeling, figure1, figure2, combinedFigure);
+            
+            // Activate Intentional Module with multiple desires (single in this case, wrapped)
+            List<Figure> availableFigures = Arrays.asList(figure1, figure2, combinedFigure);
+            List<Desire> desires = Collections.singletonList(desire);
+            
+            this.activeModule = new IntentionalModule(availableFigures, desires, feeling, memory);
+            
+            // Execute Action
+            Action nextAction = activeModule.nextAction();
+            if (nextAction != null) {
+                System.out.println("Executing Action: " + nextAction.getDescription());
+                // Simulate execution result
+                ActionResult result = simulateExecution(nextAction);
+                activeModule.applyActionResult(result);
+            }
         }
+    }
 
-        // Create connections between percepts and modules
-        createConnections();
+    private ActionResult simulateExecution(Action action) {
+        // Placeholder for real execution logic
+        // Return a positive result for demonstration
+        return new ActionResult(0.5, "Action successful");
     }
 
     private void applyFeeling(Feeling feeling, Figure... figures) {
@@ -128,15 +147,6 @@ public class PsychologicalModel {
             Arrays.stream(percepts).forEach(p -> builder.addPercept(UUID.randomUUID().toString(), p));
         }
         return builder.build();
-    }
-
-    private void createConnections() {
-        module1.associatePercept(percept1);
-        module2.associatePercept(percept2);
-        module1.associateEmotion(emotion1);
-        module2.associateEmotion(emotion2);
-        module1.associatePercept(percept2);
-        module2.associatePercept(percept1);
     }
 
     public Feeling getFeeling() {

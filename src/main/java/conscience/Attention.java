@@ -60,11 +60,18 @@ public class Attention {
 
     public Feeling getResultingEmotion(CoreEmotion coreEmotion, Set<Figure> figures) {
         for (Figure figure : figures) {
-            Class<?> keyEmotion = figure.getKeyEmotion().getClass();
-            String resultingEmotionName = FeelingsMatrix.getResultingEmotionInConsumptionDesire(coreEmotion.getClass(), keyEmotion);
+            KeyEmotion keyEmotion = figure.getKeyEmotion();
+            if (keyEmotion == null) continue;
+
+            String resultingEmotionName = FeelingsMatrix.getResultingEmotionInConsumptionDesire(coreEmotion.getClass(), keyEmotion.getClass());
             try {
-                Class<?> resultingEmotionClass = Class.forName("feelings." + resultingEmotionName);
-                return (Feeling) resultingEmotionClass.getDeclaredConstructor().newInstance();
+                // If resultingEmotionName contains package, use it directly, otherwise prepend "feelings.collection."
+                // FeelingsMatrix returns simple class name, e.g. "Joy"
+                // Assuming feeling classes are in feelings.collection package based on Joy.java location
+                String className = "feelings.collection." + resultingEmotionName;
+                Class<?> resultingEmotionClass = Class.forName(className);
+                return (Feeling) resultingEmotionClass.getDeclaredConstructor(CoreEmotion.class, KeyEmotion.class)
+                        .newInstance(coreEmotion, keyEmotion);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -100,11 +107,21 @@ public class Attention {
     }
 
     private Feeling getResultingEmotionFromFigure(Figure figure) {
-        Class<?> keyEmotion = figure.getKeyEmotion().getClass();
-        String resultingEmotionName = FeelingsMatrix.getResultingEmotionInConsumptionDesire(CoreEmotion.class, keyEmotion); // Assuming CoreEmotion is available
+        KeyEmotion keyEmotion = figure.getKeyEmotion();
+        CoreEmotion baseEmotion = figure.getBaseEmotion();
+        
+        if (keyEmotion == null || baseEmotion == null) {
+            // Cannot form feeling without both emotions
+            return null;
+        }
+
+        String resultingEmotionName = FeelingsMatrix.getResultingEmotionInConsumptionDesire(baseEmotion.getClass(), keyEmotion.getClass());
         try {
-            Class<?> resultingEmotionClass = Class.forName("feelings." + resultingEmotionName);
-            return (Feeling) resultingEmotionClass.getDeclaredConstructor().newInstance();
+             // Assuming feeling classes are in feelings.collection package
+            String className = "feelings.collection." + resultingEmotionName;
+            Class<?> resultingEmotionClass = Class.forName(className);
+            return (Feeling) resultingEmotionClass.getDeclaredConstructor(CoreEmotion.class, KeyEmotion.class)
+                    .newInstance(baseEmotion, keyEmotion);
         } catch (Exception e) {
             e.printStackTrace();
         }

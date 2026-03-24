@@ -5,10 +5,15 @@ import desires.SatisfactionLevel;
 import emotions.Affect;
 import emotions.core.CoreEmotion;
 import emotions.key.KeyEmotion;
+import intentional_modules.Action;
+import intentional_modules.Plan;
+import percepts.Percept;
 
 import java.util.Map;
 
 public interface Figure {
+    Percept getPercept();
+
     Map<Desire, SatisfactionLevel> getSatisfactionLevels();
     int getNeedSatisfaction(Desire need);
     void setNeedSatisfaction(Desire need, int value);
@@ -35,4 +40,16 @@ public interface Figure {
     
     int getActivationCount();
     Figure setActivationCount(int count);
+
+    // Behavioral Context
+    Plan getLastPlan();
+    Figure setLastPlan(Plan plan);
+
+    Action getLastAction();
+    Figure setLastAction(Action action);
+    
+    // Drive Feedback
+    Map<Desire, Double> getDriveWeights();
+    Map<Desire, Double> getLastDriveImpact();
+    Figure setLastDriveImpact(Map<Desire, Double> impact);
 }

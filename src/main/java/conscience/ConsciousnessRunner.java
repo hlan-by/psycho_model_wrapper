@@ -1,6 +1,7 @@
 package conscience;
 
 import emotions.core.CoreEmotion;
+import emotions.key.KeyEmotion;
 import feelings.Feeling;
 import feelings.SpecificFeeling;
 import figures.Figure;
@@ -46,7 +47,10 @@ public class ConsciousnessRunner implements Runnable {
         IAm selfAwareEntity = new SelfAwareEntity(specificEmotion, figures, attention);
 
         // Setup base feels
-        Feeling initialFeel = new SpecificFeeling(); //todo setup parameters
+        CoreEmotion dummyCore = new CoreEmotion() {};
+        KeyEmotion dummyKey = new KeyEmotion() {};
+        
+        Feeling initialFeel = new SpecificFeeling(dummyCore, dummyKey);
         selfAwareEntity.setCurrentFeel(initialFeel);
         selfAwareEntity.setPreviousFeel(initialFeel);
 
@@ -54,7 +58,7 @@ public class ConsciousnessRunner implements Runnable {
         Thread runnerThread = new Thread(runner);
         runnerThread.start();
 
-        Feeling newFeel = new SpecificFeeling(); //todo setup parameters
+        Feeling newFeel = new SpecificFeeling(dummyCore, dummyKey);
         selfAwareEntity.setCurrentFeel(newFeel);
 
         runner.stop();

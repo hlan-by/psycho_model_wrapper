@@ -1,137 +1,282 @@
 package intentional_modules;
 
-import emotions.Emotion;
+import desires.ConsumptionDesireBasic;
+import desires.Desire;
+import desires.ProtectionDesireBasic;
+import desires.RecognitionDesireBasic;
+import emotions.Affect;
+import emotions.EmotionReceiver;
 import emotions.core.CoreEmotion;
+import feelings.Feeling;
+import figures.Figure;
+import figures.SpecificFigure;
+import memories.MemoryService;
 import percepts.Percept;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class IntentionalModule {
 
-    private String target; // The object or goal of intentionality
-    private String goal; // The specific goal the subject wants to achieve
-    private String motivation; // The driving force behind achieving the goal
-    private String plan; // The action plan for achieving the goal
-    private String currentAction; // The current action within the plan
-    private String emotionalState; // The emotional state related to achieving the goal
-    
-    private Percept associatedPercept;
-    private Emotion associatedEmotion;
+    private Figure target;
+    private Desire sourceDrive; // Dominant desire
+    private List<Desire> desires;
+    private Feeling feeling;
 
-    // Constructor to initialize the intentional module
-    public IntentionalModule() {
-        this.target = getTarget();
-        this.goal = getGoal();
-        this.motivation = getMotivation();
-        this.plan = createPlan(this.goal); // Create a plan based on the goal
-        this.currentAction = "";
-        this.emotionalState = "";
-    }
+    private Goal goal;
+    private double motivation;
+    private Plan plan;
+    private Action currentAction;
 
-    // Method to create a plan based on the goal
-    private String createPlan(String goal) {
-        // Simple example of a plan; real application would have complex logic
-        return "Step 1: Identify resources; Step 2: Execute actions; Step 3: Achieve " + goal;
-    }
+    private final MemoryService memory;
 
-    // Method to perform the current action
-    public void performAction(String action) {
-        this.currentAction = action;
-        updateEmotionalState();
-        System.out.println("Performing action: " + action);
-    }
+    public IntentionalModule(List<Figure> figures, List<Desire> desires, Feeling feeling, MemoryService memory) {
+        this.desires = desires;
+        this.feeling = feeling;
+        this.memory = memory;
+        
+        // 1. Select Target (First, independent of specific desire for now, based on salience)
+        this.target = selectTarget(figures);
+        
+        // 2. Select Dominant Desire (Context-sensitive to target)
+        this.sourceDrive = selectDominantDesire(desires, target);
 
-    // Method to update emotional state based on the current action
-    private void updateEmotionalState() {
-        // Example logic to update emotional state
-        if (currentAction.contains("Success")) {
-            this.emotionalState = "Joy";
-        } else if (currentAction.contains("Failure")) {
-            this.emotionalState = "Disappointment";
+        // 3. Compute Motivation (Weighted by relevance)
+        this.motivation = computeMotivation(feeling, desires, target);
+        
+        // 4. Resolve Goal
+        if (target != null && sourceDrive != null) {
+            this.goal = resolveGoal(target, sourceDrive, feeling);
+            
+            // 5. Build Plan
+            this.plan = buildPlan(this.goal, memory);
         } else {
-            this.emotionalState = "Neutral";
+            this.goal = null;
+            this.plan = new Plan();
         }
     }
 
-    // Getter and setter methods for class attributes
-    public String getTarget() {
-        return target;
+    private Figure selectTarget(List<Figure> figures) {
+        if (figures == null || figures.isEmpty()) {
+            return null;
+        }
+        
+        // Select figure maximizing intentionalValue * affect.energy
+        return figures.stream()
+                .max(Comparator.comparingDouble(f -> {
+                    double value = f.getIntentionalValue();
+                    double energy = (f.getAffect() != null) ? f.getAffect().getEnergy() : 1.0;
+                    return value * energy;
+                }))
+                .orElse(null);
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    private Desire selectDominantDesire(List<Desire> desires, Figure target) {
+        if (desires == null || desires.isEmpty()) {
+            return null;
+        }
+        
+        Map<Desire, Double> weights = (target != null) ? target.getDriveWeights() : Collections.emptyMap();
+
+        // Select desire with max (impact - feedbackLevel) * relevance
+        return desires.stream()
+                .max(Comparator.comparingDouble(d -> {
+                    double tension = d.getImpact() - d.getFeedBackLevel();
+                    double relevance = weights.getOrDefault(d, (target == null ? 1.0 : 0.0));
+                    // If target is null, treat all equally (relevance 1.0). 
+                    // If target exists but has no weight for this desire, relevance is 0.
+                    // Wait, if relevance is 0, we might ignore valid desires.
+                    // Let's use a small epsilon or fallback logic.
+                    // Or assume target selection implies relevance.
+                    // For robustness: if weights map is empty (new figure), assume uniform relevance.
+                    if (weights.isEmpty()) relevance = 1.0;
+                    
+                    return tension * relevance;
+                }))
+                .orElse(desires.get(0));
     }
 
-    public String getGoal() {
-        return goal;
-    }
+    private double computeMotivation(Feeling feeling, List<Desire> desires, Figure target) {
+        double motivation = 0.0;
+        
+        if (desires == null || target == null) {
+             // Fallback to feeling energy if context missing
+             return (feeling != null && feeling.getAffect() != null) ? feeling.getAffect().getEnergy() : 0.0;
+        }
 
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
+        Map<Desire, Double> weights = target.getDriveWeights();
+        if (weights.isEmpty()) {
+             // If no weights, use feeling energy as base
+             return (feeling != null && feeling.getAffect() != null) ? feeling.getAffect().getEnergy() : 0.0;
+        }
 
-    public String getMotivation() {
+        for (Desire d : desires) {
+            double tension = d.getImpact() - d.getFeedBackLevel();
+            double relevance = weights.getOrDefault(d, 0.0);
+            motivation += tension * relevance;
+        }
+        
         return motivation;
     }
 
-    public void setMotivation(String motivation) {
-        this.motivation = motivation;
+    private Goal resolveGoal(Figure target, Desire desire, Feeling feeling) {
+        GoalType type = GoalType.MAINTAIN;
+        double desiredDelta = desire.getImpact() * 0.5; // Example logic
+
+        if (desire instanceof ConsumptionDesireBasic) {
+            type = GoalType.CONSUME;
+        } else if (desire instanceof ProtectionDesireBasic) {
+            type = GoalType.AVOID;
+        } else if (desire instanceof RecognitionDesireBasic) {
+            type = GoalType.INTERACT;
+        }
+        
+        return new Goal(target, desire, type, desiredDelta);
     }
 
-    public String getPlan() {
+    private Plan buildPlan(Goal goal, MemoryService memory) {
+        Plan newPlan = new Plan();
+        
+        if (goal == null) {
+            return newPlan;
+        }
+
+        // Query memory for relevant figures
+        List<SpecificFigure> similar = memory.findRelevant(
+            goal.getTarget().getPercept(),
+            goal.getDesire(),
+            null, // KeyEmotion context could be added if available
+            5 // topK
+        );
+
+        if (similar != null && !similar.isEmpty()) {
+            // Extract actions from similar past figures
+            for (SpecificFigure f : similar) {
+                // Assuming Figure now stores Last Plan
+                if (f.getLastPlan() != null) {
+                    newPlan.addActions(f.getLastPlan().getSteps());
+                } else {
+                    List<Action> inferred = inferActionsFromFigure(f);
+                    newPlan.addActions(inferred);
+                }
+            }
+        }
+
+        // Fallback if plan is empty
+        if (newPlan.getSteps().isEmpty()) {
+            newPlan.addActions(createFallbackPlan(goal));
+        }
+        
+        return newPlan;
+    }
+    
+    private List<Action> inferActionsFromFigure(SpecificFigure f) {
+        // Placeholder inference logic
+        List<Action> actions = new ArrayList<>();
+        if (f.getActivationCount() > 5) {
+             actions.add(new Action("Repeat successful interaction", "Interact"));
+        }
+        return actions;
+    }
+
+    private List<Action> createFallbackPlan(Goal goal) {
+        List<Action> actions = new ArrayList<>();
+        switch (goal.getType()) {
+            case CONSUME:
+                actions.add(new Action("Approach target", "Approach"));
+                actions.add(new Action("Consume target", "Consume"));
+                break;
+            case AVOID:
+                actions.add(new Action("Retreat from target", "Retreat"));
+                break;
+            case INTERACT:
+                actions.add(new Action("Observe target", "Observe"));
+                actions.add(new Action("Communicate", "Talk"));
+                break;
+            default:
+                actions.add(new Action("Observe", "Observe"));
+        }
+        return actions;
+    }
+
+    public Action nextAction() {
+        // Could be replaced with selectBestAction() if multiple options available
+        // For now, next step in plan
+        if (plan != null && !plan.isComplete()) {
+            this.currentAction = plan.nextAction();
+            return this.currentAction;
+        }
+        return null;
+    }
+
+    public void applyActionResult(ActionResult result) {
+        if (result == null) return;
+        
+        Map<Desire, Double> weights = (target != null) ? target.getDriveWeights() : Collections.emptyMap();
+        Map<Desire, Double> modifiers = result.getDriveModifiers();
+        Map<Desire, Double> recordedImpact = new HashMap<>();
+
+        if (desires != null) {
+            for (Desire d : desires) {
+                double weight = weights.getOrDefault(d, weights.isEmpty() ? 1.0 : 0.0);
+                double modifier = (modifiers != null) ? modifiers.getOrDefault(d, 1.0) : 1.0;
+                
+                double delta = result.getSuccessDelta() * weight * modifier;
+                
+                double currentFeedback = d.getFeedBackLevel();
+                d.setFeedBackLevel(currentFeedback + delta);
+                
+                recordedImpact.put(d, delta);
+            }
+        }
+        
+        // Trigger new CoreEmotion
+        if (target != null && sourceDrive != null) {
+            CoreEmotion newEmotion = EmotionReceiver.create(target, sourceDrive);
+            // In a real cycle, this would feed into the next feeling calculation
+        }
+
+        // Evaluate and Replan
+        evaluateAndReplan(result);
+        
+        // Save execution context to memory
+        if (target != null && currentAction != null) {
+             target.setLastAction(currentAction);
+             target.setLastPlan(plan);
+             target.setLastDriveImpact(recordedImpact);
+             memory.saveOrUpdate(target);
+        }
+    }
+    
+    private void evaluateAndReplan(ActionResult result) {
+        if (shouldReplan(result)) {
+            System.out.println("Replanning due to failure or low success...");
+            this.plan = buildPlan(this.goal, memory);
+        }
+    }
+
+    private boolean shouldReplan(ActionResult result) {
+        return result.getSuccessDelta() < 0;
+    }
+
+    // Getters
+    public Figure getTarget() {
+        return target;
+    }
+
+    public Goal getGoal() {
+        return goal;
+    }
+
+    public double getMotivation() {
+        return motivation;
+    }
+
+    public Plan getPlan() {
         return plan;
-    }
-
-    public void setPlan(String plan) {
-        this.plan = plan;
-    }
-
-    public String getCurrentAction() {
-        return currentAction;
-    }
-
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
-    }
-
-    public String getEmotionalState() {
-        return emotionalState;
-    }
-
-    public void setEmotionalState(String emotionalState) {
-        this.emotionalState = emotionalState;
-    }
-
-    public static void main(String[] args) {
-        // Example usage of IntentionalModule
-        IntentionalModule module = new IntentionalModule();
-
-        System.out.println("Target: " + module.getTarget());
-        System.out.println("Goal: " + module.getGoal());
-        System.out.println("Motivation: " + module.getMotivation());
-        System.out.println("Plan: " + module.getPlan());
-
-        module.performAction("Reach for the apple");
-        System.out.println("Emotional State: " + module.getEmotionalState());
-
-        module.performAction("Success: Grab the apple");
-        System.out.println("Emotional State: " + module.getEmotionalState());
-
-        module.performAction("Eat the apple");
-        System.out.println("Emotional State: " + module.getEmotionalState());
-    }
-
-    public void associatePercept(Percept percept) {
-        this.associatedPercept = percept;
-    }
-
-    public void associateEmotion(Emotion emotion) {
-        this.associatedEmotion = emotion;
-    }
-    
-    public Percept getAssociatedPercept() {
-        return associatedPercept;
-    }
-    
-    public Emotion getAssociatedEmotion() {
-        return associatedEmotion;
     }
 }
